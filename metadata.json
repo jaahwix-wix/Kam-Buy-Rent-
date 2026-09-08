@@ -1,0 +1,6 @@
+{
+  "name": "Kam Buy & Rent Property Sierra Leone",
+  "description": "Modern real estate platform for Kam Buy & Rent Property in Hamilton Peninsula, Freetown, Sierra Leone. Explore properties for sale, executive rentals, town lots, and verified diaspora land deals.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
