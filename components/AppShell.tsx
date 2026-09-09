@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { AppProvider, useApp } from '@/context/AppContext';
-import { Navbar } from '@/components/Navbar';
+import { LeftSidebarNav } from '@/components/LeftSidebarNav';
 import { Footer } from '@/components/Footer';
 import { PropertyModal } from '@/components/PropertyModal';
 import { FavoritesDrawer } from '@/components/FavoritesDrawer';
@@ -47,7 +47,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const favoritedProperties = properties.filter((p) => favorites.includes(p.id));
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 text-slate-900 selection:bg-emerald-500 selection:text-white">
       {/* Global Notification Toast */}
       {notification && (
         <div className="fixed bottom-6 right-6 z-50 max-w-md bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-5">
@@ -56,8 +56,8 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      {/* Global Navbar with Multi-Page Links */}
-      <Navbar
+      {/* Main Menu at the Left Hand Side of the System */}
+      <LeftSidebarNav
         currency={currency}
         onCurrencyToggle={toggleCurrency}
         favoritesCount={favorites.length}
@@ -67,13 +67,15 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
         onOpenAiAdvisor={openAiAdvisor}
       />
 
-      {/* Main Page View */}
-      <main className="flex-1">
-        {children}
-      </main>
+      {/* Right Content Pane: Main View + Global Footer */}
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
+        <main className="flex-1">
+          {children}
+        </main>
 
-      {/* Global Footer */}
-      <Footer />
+        {/* Global Footer */}
+        <Footer />
+      </div>
 
       {/* Global Modals */}
       {selectedPropertyForModal && (
@@ -115,7 +117,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
           onConfirmBooking={(booking) => {
             closeInspection();
             showNotification(
-              `Viewing tour scheduled for ${booking.clientName} (${booking.inspectionType === 'diaspora-video' ? 'Diaspora Live Video' : 'In-Person'})! Agent desk notified.`
+              `Viewing tour scheduled for ${booking.clientName} (${booking.type === 'diaspora-video' ? 'Diaspora Live Video' : 'In-Person'})! Agent desk notified.`
             );
           }}
         />

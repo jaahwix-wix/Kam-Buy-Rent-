@@ -95,6 +95,10 @@ export const AiPropertyAdvisor: React.FC<AiPropertyAdvisorProps> = ({
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`Network response error: ${response.status}`);
+      }
+
       const data = await response.json();
 
       setMessages((prev) => [

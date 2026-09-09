@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { query, propertyContext, conversationHistory } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const query = typeof body?.query === 'string' ? body.query : 'general inquiry';
+    const propertyContext = body?.propertyContext || null;
 
     const apiKey = process.env.GEMINI_API_KEY;
 

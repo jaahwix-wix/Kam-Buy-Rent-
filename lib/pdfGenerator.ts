@@ -95,7 +95,7 @@ export function generatePropertyPdf(property: Property, currency: Currency): voi
     { label: 'BEDROOMS', value: property.specs.bedrooms !== undefined ? `${property.specs.bedrooms} Beds` : 'N/A' },
     { label: 'BATHROOMS', value: property.specs.bathrooms !== undefined ? `${property.specs.bathrooms} Baths` : 'N/A' },
     { label: 'LAND SIZE', value: property.specs.townLots !== undefined ? `${property.specs.townLots} Town Lots (${property.specs.sqm || 405} m²)` : `${property.specs.sqm || 'N/A'} m²` },
-    { label: 'PARKING / FURNISH', value: property.specs.parkingSpaces ? `${property.specs.parkingSpaces} Bays` : property.specs.furnishing },
+    { label: 'PARKING / FURNISH', value: property.specs.parkingSpaces ? `${property.specs.parkingSpaces} Bays` : (property.specs.furnishing || 'Compound Parking') },
   ];
 
   specs.forEach((item, index) => {
@@ -108,7 +108,7 @@ export function generatePropertyPdf(property: Property, currency: Currency): voi
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
     doc.setTextColor(15, 23, 42);
-    doc.text(item.value, xPos, y + 11.5);
+    doc.text(item.value || 'N/A', xPos, y + 11.5);
   });
 
   y += 21;
@@ -130,17 +130,17 @@ export function generatePropertyPdf(property: Property, currency: Currency): voi
   doc.setFont('helvetica', 'bold');
   doc.text('Power / Grid:', margin + 4, y + 11);
   doc.setFont('helvetica', 'normal');
-  doc.text(property.utilities.power, margin + 26, y + 11);
+  doc.text(property.utilities?.power || 'EDSA Grid + Solar Backup', margin + 26, y + 11);
 
   doc.setFont('helvetica', 'bold');
   doc.text('Water Supply:', margin + 4, y + 16.5);
   doc.setFont('helvetica', 'normal');
-  doc.text(property.utilities.water, margin + 26, y + 16.5);
+  doc.text(property.utilities?.water || 'Guma Valley Water + Storage Tanks', margin + 26, y + 16.5);
 
   doc.setFont('helvetica', 'bold');
   doc.text('Security:', margin + 4, y + 22);
   doc.setFont('helvetica', 'normal');
-  doc.text(property.utilities.security, margin + 26, y + 22);
+  doc.text(property.utilities?.security || 'Gated Compound with Watchman Post', margin + 26, y + 22);
 
   y += 29;
 
@@ -156,7 +156,8 @@ export function generatePropertyPdf(property: Property, currency: Currency): voi
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(241, 245, 249);
-  doc.text(`Title Status: ${property.titleDeed.status} • Cadastral Survey: Cleared • Ministry Registration: Verified`, margin + 4, y + 10.5);
+  const titleDeedText = property.titleDeed?.status || 'Conveyance Deed Registered at OARG';
+  doc.text(`Title Status: ${titleDeedText} • Cadastral Survey: Cleared • Ministry Registration: Verified`, margin + 4, y + 10.5);
 
   y += 19;
 
@@ -170,7 +171,7 @@ export function generatePropertyPdf(property: Property, currency: Currency): voi
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(71, 85, 105);
-  const descLines = doc.splitTextToSize(property.description, contentWidth);
+  const descLines = doc.splitTextToSize(property.description || 'Verified property listing located along the Peninsula in Freetown, Sierra Leone.', contentWidth);
   const maxDescLines = descLines.slice(0, 5); // keep to 5 lines for clean 1-page fit
   doc.text(maxDescLines, margin, y);
   y += (maxDescLines.length * 4.2) + 4;
@@ -185,9 +186,11 @@ export function generatePropertyPdf(property: Property, currency: Currency): voi
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(51, 65, 85);
-  const half = Math.ceil(property.featuresList.length / 2);
-  const col1 = property.featuresList.slice(0, 4);
-  const col2 = property.featuresList.slice(4, 8);
+  const features = property.featuresList && property.featuresList.length > 0
+    ? property.featuresList
+    : ['EDSA Grid Connection', 'Guma Valley Water Connection', 'OARG Registered Title', 'Peninsular Highway Access'];
+  const col1 = features.slice(0, 4);
+  const col2 = features.slice(4, 8);
 
   col1.forEach((f, idx) => {
     doc.text(`• ${f}`, margin + 2, y + (idx * 4));
@@ -203,15 +206,21 @@ export function generatePropertyPdf(property: Property, currency: Currency): voi
   doc.setDrawColor(203, 213, 225);
   doc.rect(margin, y, contentWidth, 18, 'FD');
 
+  const agentName = property.agent?.name || 'Kam Peninsula Agent';
+  const agentRole = property.agent?.role || 'Peninsula Property Consultant';
+  const agentPhone = property.agent?.phone || '+232 78 889 450';
+  const agentWhatsapp = property.agent?.whatsapp || '23278889450';
+  const agentEmail = property.agent?.email || 'info@kambuyrent.sl';
+
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   doc.setTextColor(15, 23, 42);
-  doc.text(`DEDICATED AGENT: ${property.agent.name.toUpperCase()} (${property.agent.role})`, margin + 4, y + 5.5);
+  doc.text(`DEDICATED AGENT: ${agentName.toUpperCase()} (${agentRole})`, margin + 4, y + 5.5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(71, 85, 105);
-  doc.text(`Direct Phone: ${property.agent.phone}   |   WhatsApp: +${property.agent.whatsapp}   |   Email: ${property.agent.email}`, margin + 4, y + 10.5);
+  doc.text(`Direct Phone: ${agentPhone}   |   WhatsApp: +${agentWhatsapp}   |   Email: ${agentEmail}`, margin + 4, y + 10.5);
   doc.text('Kam Buy & Rent Property HQ: Peninsular Highway, Hamilton, Freetown, Sierra Leone', margin + 4, y + 14.5);
 
   // Footer Disclaimer

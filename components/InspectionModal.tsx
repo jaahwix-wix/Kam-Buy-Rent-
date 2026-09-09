@@ -35,10 +35,24 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({
   const [timeZone, setTimeZone] = useState('GMT (Sierra Leone / UK)');
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientName || !clientPhone || !preferredDate) return;
+    setFormError(null);
+
+    if (!clientName.trim()) {
+      setFormError('Please enter your name.');
+      return;
+    }
+    if (!clientPhone.trim()) {
+      setFormError('Please enter your WhatsApp or phone number so we can reach you.');
+      return;
+    }
+    if (!preferredDate) {
+      setFormError('Please select a preferred inspection date.');
+      return;
+    }
 
     const booking: InspectionBooking = {
       id: `insp-${Date.now()}`,
@@ -120,6 +134,12 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="overflow-y-auto p-5 sm:p-6 space-y-4">
+            {formError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+                <span>{formError}</span>
+              </div>
+            )}
             {/* Property summary */}
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">

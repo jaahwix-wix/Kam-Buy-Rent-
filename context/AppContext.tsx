@@ -60,7 +60,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [properties, setProperties] = useState<Property[]>(INITIAL_PROPERTIES);
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>('NLE');
   const [favorites, setFavorites] = useState<string[]>(['kbr-001', 'kbr-003']);
 
   // Modals
@@ -81,9 +81,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (typeof window === 'undefined') return;
     const timer = setTimeout(() => {
       try {
-        const savedCurrency = localStorage.getItem('kam_currency') as Currency;
+        const savedCurrency = localStorage.getItem('kam_currency_v2') as Currency;
         if (savedCurrency === 'USD' || savedCurrency === 'NLE') {
           setCurrency(savedCurrency);
+        } else {
+          // Default explicitly to Sierra Leonean currency (NLE)
+          setCurrency('NLE');
         }
         const savedFavs = localStorage.getItem('kam_favorites');
         if (savedFavs) {
@@ -98,10 +101,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const toggleCurrency = () => {
     setCurrency((prev) => {
-      const next = prev === 'USD' ? 'NLE' : 'USD';
+      const next = prev === 'NLE' ? 'USD' : 'NLE';
       if (typeof window !== 'undefined') {
         try {
-          localStorage.setItem('kam_currency', next);
+          localStorage.setItem('kam_currency_v2', next);
         } catch {}
       }
       return next;

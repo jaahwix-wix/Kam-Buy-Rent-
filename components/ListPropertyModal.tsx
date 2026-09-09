@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Property, PropertyType, ListingStatus } from '@/types/property';
-import { HAMILTON_MAPS_LINK } from '@/data/properties';
+import { HAMILTON_MAPS_LINK, EXCHANGE_RATE_USD_TO_NLE } from '@/data/properties';
 import { 
   X, 
   PlusCircle, 
@@ -19,6 +19,10 @@ interface ListPropertyModalProps {
   onAddProperty: (property: Property) => void;
 }
 
+function generateNewPropertyId(): string {
+  return `usr-${Date.now()}`;
+}
+
 export const ListPropertyModal: React.FC<ListPropertyModalProps> = ({
   onClose,
   onAddProperty,
@@ -27,7 +31,7 @@ export const ListPropertyModal: React.FC<ListPropertyModalProps> = ({
   const [tagline, setTagline] = useState('');
   const [type, setType] = useState<PropertyType>('house');
   const [status, setStatus] = useState<ListingStatus>('sale');
-  const [priceUSD, setPriceUSD] = useState<number | ''>('');
+  const [priceNLe, setPriceNLe] = useState<number | ''>('');
   const [area, setArea] = useState('Hamilton Peninsula');
   const [address, setAddress] = useState('');
   const [bedrooms, setBedrooms] = useState<number | ''>(3);
@@ -40,10 +44,30 @@ export const ListPropertyModal: React.FC<ListPropertyModalProps> = ({
   const [agentName, setAgentName] = useState('');
   const [agentPhone, setAgentPhone] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const calculatedUSD = priceNLe !== '' ? Math.round(Number(priceNLe) / EXCHANGE_RATE_USD_TO_NLE) : 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !priceUSD || !address || !agentPhone) return;
+    setFormError(null);
+
+    if (!title.trim()) {
+      setFormError('Please enter a descriptive property title.');
+      return;
+    }
+    if (!priceNLe || Number(priceNLe) <= 0) {
+      setFormError('Please enter a valid listing price in Sierra Leonean Leones (NLe).');
+      return;
+    }
+    if (!address.trim()) {
+      setFormError('Please enter the physical road or landmark address.');
+      return;
+    }
+    if (!agentPhone.trim()) {
+      setFormError('Please provide a WhatsApp or contact telephone number.');
+      return;
+    }
 
     // Pick appropriate architectural image based on type
     const sampleImages: Record<PropertyType, string[]> = {
@@ -56,12 +80,12 @@ export const ListPropertyModal: React.FC<ListPropertyModalProps> = ({
     };
 
     const newProperty: Property = {
-      id: `usr-${Date.now()}`,
+      id: generateNewPropertyId(),
       title,
       tagline: tagline || `${type.toUpperCase()} in ${area}, Freetown`,
       type,
       status,
-      priceUSD: Number(priceUSD),
+      priceUSD: calculatedUSD,
       rentPeriod: status === 'rent' ? 'year' : undefined,
       negotiable: true,
       location: {
@@ -166,6 +190,12 @@ export const ListPropertyModal: React.FC<ListPropertyModalProps> = ({
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="overflow-y-auto p-5 sm:p-6 space-y-4">
+            {formError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+                <span>{formError}</span>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">Listing Purpose</label>
@@ -210,15 +240,25 @@ export const ListPropertyModal: React.FC<ListPropertyModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Price in USD ($) *</label>
-                <input
-                  type="number"
-                  required
-                  placeholder="e.g. 150000"
-                  value={priceUSD}
-                  onChange={(e) => setPriceUSD(e.target.value === '' ? '' : Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-emerald-500"
-                />
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Price in Sierra Leonean Leones (NLe) *
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-xs font-bold text-slate-400">NLe</span>
+                  <input
+                    type="number"
+                    required
+                    placeholder="e.g. 3375000"
+                    value={priceNLe}
+                    onChange={(e) => setPriceNLe(e.target.value === '' ? '' : Number(e.target.value))}
+                    className="w-full pl-11 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                {priceNLe !== '' && (
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Approx. ${calculatedUSD.toLocaleString()} USD (at 22.5 NLe/$1)
+                  </p>
+                )}
               </div>
 
               <div>

@@ -8,6 +8,7 @@ import { useApp } from '@/context/AppContext';
 import { INITIAL_PROPERTIES, EXCHANGE_RATE_USD_TO_NLE, HAMILTON_MAPS_LINK } from '@/data/properties';
 import { HistoricalPropertyChart } from '@/components/HistoricalPropertyChart';
 import { PriceAlertModal } from '@/components/PriceAlertModal';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { generatePropertyPdf } from '@/lib/pdfGenerator';
 import { 
   Building2, 
@@ -59,6 +60,7 @@ export default function PropertyDetailPage() {
   const [hasPriceAlert, setHasPriceAlert] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
@@ -121,22 +123,33 @@ export default function PropertyDetailPage() {
   const handleDownloadPdf = () => {
     if (!property || isGeneratingPdf) return;
     setIsGeneratingPdf(true);
+    setPdfError(null);
     try {
       generatePropertyPdf(property, currency);
       setPdfSuccess(true);
       setTimeout(() => setPdfSuccess(false), 3000);
     } catch (err) {
       console.error('Error generating PDF:', err);
+      setPdfError('Failed to generate PDF summary. Please try again.');
+      setTimeout(() => setPdfError(null), 4000);
     } finally {
       setIsGeneratingPdf(false);
     }
   };
 
-  const handleShare = () => {
-    if (typeof window !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 3000);
+  const handleShare = async () => {
+    if (typeof window !== 'undefined') {
+      try {
+        if (navigator?.clipboard?.writeText) {
+          await navigator.clipboard.writeText(window.location.href);
+          setCopySuccess(true);
+          setTimeout(() => setCopySuccess(false), 3000);
+        } else {
+          window.prompt('Copy property link:', window.location.href);
+        }
+      } catch (err) {
+        console.warn('Clipboard write failed:', err);
+      }
     }
   };
 
@@ -337,6 +350,12 @@ export default function PropertyDetailPage() {
                   <span>{isGeneratingPdf ? 'Generating PDF...' : pdfSuccess ? 'PDF Downloaded!' : 'Download PDF Info'}</span>
                 </button>
 
+                {pdfError && (
+                  <span className="text-[11px] text-rose-400 bg-rose-950/60 px-2 py-1 rounded border border-rose-800">
+                    {pdfError}
+                  </span>
+                )}
+
                 <button
                   onClick={() => setIsAlertModalOpen(true)}
                   className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-colors border flex items-center gap-1.5 cursor-pointer ${
@@ -532,10 +551,12 @@ export default function PropertyDetailPage() {
 
             {/* Historical Property Trends Bar Chart */}
             <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
-              <HistoricalPropertyChart
-                currency={currency}
-                propertyArea={property.location.area}
-              />
+              <ErrorBoundary fallbackTitle="Price Trends Unavailable" fallbackMessage="Could not load the Peninsula price appreciation chart at this moment.">
+                <HistoricalPropertyChart
+                  currency={currency}
+                  propertyArea={property.location.area}
+                />
+              </ErrorBoundary>
             </div>
           </div>
 
@@ -683,6 +704,7 @@ export default function PropertyDetailPage() {
       {/* Price Alert Modal */}
       <PriceAlertModal
         property={property}
+        currency={currency}
         isOpen={isAlertModalOpen}
         onClose={() => setIsAlertModalOpen(false)}
         onAlertSaved={() => setHasPriceAlert(true)}

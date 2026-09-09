@@ -704,7 +704,7 @@ export const NEIGHBORHOODS = [
     name: 'Hamilton Peninsula',
     description: 'The premier coastal haven of Freetown with scenic beaches, peaceful villages, and rapid luxury development. Home of Kam Buy & Rent Property.',
     highlight: 'Coastal Luxury & Peace',
-    avgPricePlot: '$40,000 - $60,000 / lot',
+    avgPricePlot: 'NLe 900,000 - 1,350,000 / lot',
     beachDistance: '0 - 5 mins',
     freetownCBD: '30 mins via Peninsular Road',
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'
@@ -714,7 +714,7 @@ export const NEIGHBORHOODS = [
     name: 'Sussex & River No. 2',
     description: 'Famed globally for crystal clear rivers meeting pure white sand beaches, seafood beach bars, and hillside tropical villas.',
     highlight: 'Pristine Beaches & Eco-Living',
-    avgPricePlot: '$45,000 - $70,000 / lot',
+    avgPricePlot: 'NLe 1,000,000 - 1,575,000 / lot',
     beachDistance: 'Immediate walking distance',
     freetownCBD: '40 mins',
     image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80'
@@ -724,7 +724,7 @@ export const NEIGHBORHOODS = [
     name: 'Lakka & Ogoo Farm',
     description: 'A vibrant peninsula town nestled between Goderich and Hamilton. Excellent mix of beach culture, commercial amenities, and family compounds.',
     highlight: 'Accessible Coastal Living',
-    avgPricePlot: '$35,000 - $55,000 / lot',
+    avgPricePlot: 'NLe 780,000 - 1,230,000 / lot',
     beachDistance: '2 - 7 mins',
     freetownCBD: '25 mins',
     image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80'
@@ -734,7 +734,7 @@ export const NEIGHBORHOODS = [
     name: 'Regent & Hill Station',
     description: 'Mountain ridge living with cool year-round temperatures, lush rainforest views, and proximity to diplomatic residences and embassies.',
     highlight: 'Cool Climate & Executive Homes',
-    avgPricePlot: '$50,000 - $90,000 / lot',
+    avgPricePlot: 'NLe 1,125,000 - 2,025,000 / lot',
     beachDistance: '20 mins',
     freetownCBD: '15 mins',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'
@@ -744,7 +744,7 @@ export const NEIGHBORHOODS = [
     name: 'Tokeh Beach',
     description: 'Exclusive resort-style coastal enclave boasting vast stretches of white sand, luxury beach lodges, and premier vacation investments.',
     highlight: 'Resort Strip & High Appreciation',
-    avgPricePlot: '$35,000 - $60,000 / lot',
+    avgPricePlot: 'NLe 780,000 - 1,350,000 / lot',
     beachDistance: '0 - 3 mins',
     freetownCBD: '45 mins',
     image: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=800&q=80'
@@ -754,7 +754,7 @@ export const NEIGHBORHOODS = [
     name: 'Lumley & Aberdeen',
     description: 'The energetic heart of Freetown coastal nightlife, beach hotels, restaurants, and upscale serviced apartments.',
     highlight: 'Dining, Nightlife & Business Hub',
-    avgPricePlot: '$80,000 - $150,000+ / lot',
+    avgPricePlot: 'NLe 1,800,000 - 3,375,000+ / lot',
     beachDistance: '0 - 5 mins',
     freetownCBD: '15 mins',
     image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'

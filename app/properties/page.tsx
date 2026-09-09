@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
@@ -27,7 +27,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 
-export default function PropertiesCatalogPage() {
+function PropertiesCatalogContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('query') || '';
   const initialPurpose = (searchParams.get('purpose') as ListingStatus | 'all') || 'all';
@@ -358,3 +358,21 @@ export default function PropertiesCatalogPage() {
     </div>
   );
 }
+
+export default function PropertiesCatalogPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs text-slate-500 font-semibold">Loading Peninsula Properties...</p>
+          </div>
+        </div>
+      }
+    >
+      <PropertiesCatalogContent />
+    </Suspense>
+  );
+}
+
